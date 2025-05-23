@@ -27,24 +27,12 @@ export async function POST(request: Request) {
     case "checkout.session.completed": {
       const orderId = event.data.object.metadata?.orderId;
       if (!orderId) {
-        return NextResponse.json({
-          received: true,
-        });
+        return NextResponse.json({ received: true });
       }
       const order = await db.order.update({
-        where: {
-          id: Number(orderId),
-        },
-        data: {
-          status: "PAYMENT_CONFIRMED",
-        },
-        include: {
-          restaurant: {
-            select: {
-              slug: true,
-            },
-          },
-        },
+        where: { id: Number(orderId) },
+        data: { status: "PAYMENT_CONFIRMED" },
+        include: { restaurant: { select: { slug: true } } },
       });
       revalidatePath(`/${order.restaurant.slug}/menu`);
       break;
@@ -53,31 +41,17 @@ export async function POST(request: Request) {
     case "charge.failed": {
       const orderId = event.data.object.metadata?.orderId;
       if (!orderId) {
-        return NextResponse.json({
-          received: true,
-        });
+        return NextResponse.json({ received: true });
       }
       const order = await db.order.update({
-        where: {
-          id: Number(orderId),
-        },
-        data: {
-          status: "PAYMENT_FAILED",
-        },
-        include: {
-          restaurant: {
-            select: {
-              slug: true,
-            },
-          },
-        },
+        where: { id: Number(orderId) },
+        data: { status: "PAYMENT_FAILED" },
+        include: { restaurant: { select: { slug: true } } },
       });
       revalidatePath(`/${order.restaurant.slug}/menu`);
       break;
     }
   }
 
-  return NextResponse.json({
-    received: true,
-  });
+  return NextResponse.json({ received: true });
 }
