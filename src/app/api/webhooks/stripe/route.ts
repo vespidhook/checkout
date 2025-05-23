@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       }
       const order = await db.order.update({
         where: { id: Number(orderId) },
-        data: { status: "PAYMENT_CONFIRMED" },
+        data: { status: "PAYMENT_CONFIRMED" as any },
         include: { restaurant: { select: { slug: true } } },
       });
       revalidatePath(`/${order.restaurant.slug}/menu`);
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       }
       const order = await db.order.update({
         where: { id: Number(orderId) },
-        data: { status: "PAYMENT_FAILED" },
+        data: { status: "PAYMENT_FAILED" as any },
         include: { restaurant: { select: { slug: true } } },
       });
       revalidatePath(`/${order.restaurant.slug}/menu`);
